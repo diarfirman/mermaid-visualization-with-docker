@@ -17,6 +17,7 @@ export function createApp() {
   app.use(express.json());
   // Serve static files (HTML pages)
   app.use('/views', express.static(viewsDir));
+  app.use('/static', express.static(path.join(publicDir, 'static')));
   return app;
 }
 
