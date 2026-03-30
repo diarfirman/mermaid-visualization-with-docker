@@ -28,7 +28,7 @@ function createMcpServer() {
               diagram_type: {
                 type: 'string',
                 description:
-                  'Jenis diagram (flowchart, sequence, mindmap, classDiagram, erDiagram, stateDiagram, gantt, pie). Kosongkan untuk melihat daftar.',
+                  'Jenis diagram (flowchart, sequence, mindmap, classDiagram, erDiagram, stateDiagram, gantt, pie, journey). Kosongkan untuk melihat daftar.',
               },
             },
           },

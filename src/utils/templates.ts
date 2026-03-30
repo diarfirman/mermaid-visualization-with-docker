@@ -139,5 +139,32 @@ export const MermaidTemplates: Record<string, MermaidTemplate> = {
       "title diikuti judul chart",
       "Nilai berupa angka numerik"
     ]
+  },
+  journey: {
+    description: "User journey diagram untuk memetakan pengalaman pengguna dalam menyelesaikan sebuah alur/tugas.",
+    example: `journey
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 5: Me`,
+    template: `journey
+    title JOURNEY_TITLE
+    section Section1
+      Task1: score: Actor1
+      Task2: score: Actor1, Actor2
+    section Section2
+      Task3: score: Actor1`,
+    rules: [
+      "Mulai dengan 'journey'",
+      "title (opsional) untuk judul diagram",
+      "Gunakan 'section' untuk membagi fase/tahapan",
+      "Format task: 'Task name: score: Actor1, Actor2'",
+      "Score adalah angka 1–5 (1=sulit/buruk, 5=mudah/baik)",
+      "Beberapa actor dipisahkan dengan koma"
+    ]
   }
 };
