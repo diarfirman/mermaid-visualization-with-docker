@@ -1,0 +1,36 @@
+services:
+  mermaid:
+    build: .
+    container_name: mermaid-mcp-server
+    restart: unless-stopped
+    expose:
+      - 3000
+    environment:
+      - PUBLIC_URL=https://drfmermaid.abrdns.com:4443
+    volumes:
+      - views_data:/app/public/views
+
+  cleaner:
+    image: alpine:latest
+    container_name: mermaid-cleaner
+    restart: unless-stopped
+    volumes:
+      - views_data:/views
+    entrypoint: >
+      sh -c "echo '0 2 * * * find /views -name \"*.html\" -mtime +3 -delete' > /etc/crontabs/root
+      && crond -f -l 8"
+
+  nginx:
+    image: nginx:latest
+    container_name: mermaid-nginx
+    restart: unless-stopped
+    ports:
+      - "4443:4443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - mermaid
+
+volumes:
+  views_data:
