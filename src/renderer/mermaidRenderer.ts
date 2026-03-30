@@ -66,6 +66,33 @@ export async function createMermaidHtmlPage(
       color: #c00;
       display: none;
     }
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-pdf  { background: #e53935; color: white; }
+    .btn-png  { background: #1976d2; color: white; }
+    @media print {
+      body { background: white; padding: 0; }
+      .actions, .diagram-id, .error-box { display: none !important; }
+      .diagram-container {
+        box-shadow: none;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -73,6 +100,10 @@ export async function createMermaidHtmlPage(
     <pre class="mermaid">${escapedCode}</pre>
   </div>
   <div class="error-box" id="error-box"></div>
+  <div class="actions">
+    <button class="btn btn-pdf" onclick="savePDF()">Save as PDF</button>
+    <button class="btn btn-png" onclick="savePNG()">Download PNG</button>
+  </div>
   <span class="diagram-id">ID: ${id}</span>
   <script>
     mermaid.initialize({
@@ -87,6 +118,37 @@ export async function createMermaidHtmlPage(
       box.textContent = 'Gagal merender diagram: ' + err.message;
       box.style.display = 'block';
     });
+
+    function savePDF() {
+      window.print();
+    }
+
+    function savePNG() {
+      var svg = document.querySelector('.mermaid svg');
+      if (!svg) { alert('Diagram belum siap, coba beberapa saat lagi.'); return; }
+
+      var svgData = new XMLSerializer().serializeToString(svg);
+      var canvas = document.createElement('canvas');
+      var scale = 2; // retina quality
+      var bbox = svg.getBoundingClientRect();
+      canvas.width  = bbox.width  * scale;
+      canvas.height = bbox.height * scale;
+
+      var ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, bbox.width, bbox.height);
+
+      var img = new Image();
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, bbox.width, bbox.height);
+        var a = document.createElement('a');
+        a.download = 'diagram-${id}.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+      };
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    }
   </script>
 </body>
 </html>`;
